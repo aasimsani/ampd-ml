@@ -1,11 +1,9 @@
-tensorflow
-ray
 dvc
 wandb
 jupyterlab
 pandas
+dask
 numpy
-xlrd
 ipykernel
 matplotlib
-plotly
+Pillow
