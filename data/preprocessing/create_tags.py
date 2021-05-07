@@ -6,6 +6,13 @@ import numpy as np
 import pandas as pd
 
 def create_speech_bubble_data():
+    """
+    This function takes teh page metadata json files
+    from data/datasets/page_metadata/ and harvests the
+    information about the speech bubbles on each page.
+    It then outputs this as a pandas readable CSV at
+    data/datasets/speech_bubble_locations.csv
+    """    
 
     data_dir = "data/datasets/page_metadata/"
     bubble_dir = "data/"
