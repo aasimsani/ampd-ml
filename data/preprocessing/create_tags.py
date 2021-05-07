@@ -17,7 +17,6 @@ def create_speech_bubble_data():
 
     data_dir = "data/datasets/page_metadata/"
     image_dir = "data/datasets/page_images/"
-    bubble_dir = "data/"
     tags_filename = "data/datasets/speech_bubble_locations.csv"
 
     data = {
@@ -48,10 +47,18 @@ def create_speech_bubble_data():
 
                 file_ref = page.name
 
-                img = Image.open(bubble_dir+bubble.speech_bubble)
+                w = bubble.width
+                h = bubble.height
 
-                w = img.size[0]
-                h = img.size[1]
+                if "stretch x" in bubble.transforms:
+                    factor = bubble.transform_metadata['stretch_x_factor']
+
+                    w = round(w*(1+factor))
+
+                if "stretch y" in bubble.transforms:
+                    factor = bubble.transform_metadata['stretch_y_factor']
+
+                    h = round(h*(1+factor))
 
                 # Since bubbles go through transformations make sure you
                 # get the correct width and heights
@@ -59,8 +66,25 @@ def create_speech_bubble_data():
                 new_height = round(np.sqrt(bubble.resize_to/aspect_ratio))
                 new_width = round(new_height * aspect_ratio)
 
-                x2 = x1 + new_height
-                y2 = y1 + new_width
+                x2 = x1 + new_width
+                y2 = y1 + new_height
+
+                if x2 > 1700:
+                    x1 = x1 - (x2 - 1700)
+
+                if y2 > 2400:
+                    y1 = y1 - (y2 - 2400)
+
+                x2 = x1 + new_width
+                y2 = y1 + new_height
+
+                # TODO: Won't be needed until rotation is fixed across the
+                # pipeline
+
+                # if "rotate" in bubble.transforms:
+                #     angle = bubble.transform_metadata['rotation_amount']
+
+                #     angle_rad = (np.pi/180)*angle
 
                 # Convert tags to ratio of width and height
                 x1 = x1/p_w

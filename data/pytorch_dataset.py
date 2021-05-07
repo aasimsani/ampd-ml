@@ -131,7 +131,7 @@ class MangaPanelDataset(object):
         file_id = self.images[idx]
         speech_bubbles = self.labels[self.labels['file_id'] == file_id]
 
-        shrink_factor = 4
+        shrink_factor = 8
         img_path = os.path.join(self.image_folder, file_id+".png")
         img = Image.open(img_path).convert("L")
         img = img.resize((round(img.size[0]/shrink_factor),
