@@ -128,5 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Remove DVC sensitive data 
-.dvc/
+# User defined
+data/datasets/
+.vscode/
+config/

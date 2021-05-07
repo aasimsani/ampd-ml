@@ -6,4 +6,4 @@ dask
 numpy
 ipykernel
 matplotlib
-Pillow
+tqdm
