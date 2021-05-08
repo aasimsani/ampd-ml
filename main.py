@@ -10,6 +10,7 @@ if __name__ == '__main__':
     parser = pl.Trainer.add_argparse_args(parent_parser=parser)
     parser.add_argument("--train_model", action="store_true")
     parser.add_argument("--create_tags", action="store_true")
+    parser.add_argument("--log", action="store_true")
 
     args = parser.parse_args()
 
