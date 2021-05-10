@@ -6,7 +6,7 @@ detector for manga panels in order to allow the manga to be translated more clea
 ## Current progress
 - [x] Create a dataset from the Artifical Manga Panel Dataset repo
 - [x] Run a benchmark via FasterRCNN to see how well it works out of the box
-- [] Create or obtain a test set of real manga panels to further diagnose the model
-- [] Modify and iterate
+- [ ] Create or obtain a test set of real manga panels to further diagnose the model
+- [ ] Modify and iterate
 
 Created from template https://github.com/aasimsani/ml_project_template
