@@ -133,3 +133,6 @@ data/datasets/
 .vscode/
 config/
 lightning_logs/
+artifacts/
+wandb/
+config/

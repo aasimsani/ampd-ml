@@ -27,6 +27,7 @@ class BaseModel(pl.LightningModule):
         self.save_hyperparameters()
         self.optimizer = optimizer
         self.num_classes = num_classes
+        self.learning_rate = learning_rate
         # self.model = torchvision.models.detection.retinanet_resnet50_fpn(
         #                     num_classes=num_classes,
         #                     pretrained_backbone=pretrained_backbone
@@ -48,7 +49,7 @@ class BaseModel(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = self.optimizer(
             self.parameters(),
-            lr=self.hparams.learning_rate,
+            lr=self.learning_rate,
             weight_decay=self.hparams.weight_decay
         )
         return optimizer

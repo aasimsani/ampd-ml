@@ -24,12 +24,22 @@ class MangaPanelDataset(object):
 
     :type split: list
 
+    :param resize: Whether or not to resize the image being served, defaults
+    to False
+
+    :type resize: bool, optional
+
     :param transforms: Whether or not to transform images, defaults to False
 
     :type transforms: bool, optional
     """
 
-    def __init__(self, labels_file, image_folder, split, transforms=False):
+    def __init__(self,
+                 labels_file,
+                 image_folder,
+                 split,
+                 resize=False,
+                 transforms=False):
         """
         Constructor method
         """
@@ -43,6 +53,7 @@ class MangaPanelDataset(object):
         self.image_folder = image_folder
         self.images = self.labels['file_id'].unique()
 
+        self.resize = resize
         self.transforms = Compose([ToTensor()])
 
     def __getitem__(self, idx):
@@ -67,11 +78,12 @@ class MangaPanelDataset(object):
         shrink_factor = 8
         img_path = os.path.join(self.image_folder, file_id+".png")
         img = Image.open(img_path).convert("L")
-        img = img.resize((round(img.size[0]/shrink_factor),
-                          round(img.size[1]/shrink_factor))
-                         )
+        if self.resize:
+            img = img.resize((round(img.size[0]/shrink_factor),
+                             round(img.size[1]/shrink_factor))
+                             )
 
-        resize_w, resize_h = img.size
+        w, h = img.size
         img = self.transforms(img)
 
         # Turn into 3 channel like RGB
@@ -83,26 +95,26 @@ class MangaPanelDataset(object):
         # Get the bubble coordinates
         for bubble in speech_bubbles.iterrows():
             bubble = bubble[1]
-            x1 = bubble['x1']*resize_w
-            y1 = bubble['y1']*resize_h
+            x1 = bubble['x1']*w
+            y1 = bubble['y1']*h
 
-            x2 = bubble['x2']*resize_w
-            y2 = bubble['y2']*resize_h
+            x2 = bubble['x2']*w
+            y2 = bubble['y2']*h
             box = [x1, y1, x2, y2]
             boxes.append(box)
 
         # Convert to tensors
-        boxes = torch.as_tensor(boxes, dtype=torch.float32)
+        boxes = torch.as_tensor(boxes, dtype=torch.float16)
         labels = torch.ones((num_objs, ), dtype=torch.int64)
-        iscrowd = torch.zeros((num_objs, ), dtype=torch.int64)
-        area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
+        iscrowd = torch.zeros((num_objs, ), dtype=torch.int16)
+        # area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
 
         target = {}
 
         target["boxes"] = boxes
         target["labels"] = labels
-        target["image_id"] = torch.tensor([idx])
-        target["area"] = area
+        target["image_id"] = torch.as_tensor([idx])
+        # target["area"] = area
         target["iscrowd"] = iscrowd
 
         return img, target
@@ -134,19 +146,20 @@ class MangaPanelDataset(object):
         shrink_factor = 8
         img_path = os.path.join(self.image_folder, file_id+".png")
         img = Image.open(img_path).convert("L")
-        img = img.resize((round(img.size[0]/shrink_factor),
-                          round(img.size[1]/shrink_factor))
-                         )
-        resize_w, resize_h = img.size
+        if self.resize:
+            img = img.resize((round(img.size[0]/shrink_factor),
+                              round(img.size[1]/shrink_factor))
+                             )
+        w, h = img.size
 
         draw = ImageDraw.Draw(img)
         for bubble in speech_bubbles.iterrows():
             bubble = bubble[1]
-            x1 = bubble['x1']*resize_w
-            y1 = bubble['y1']*resize_h
+            x1 = bubble['x1']*w
+            y1 = bubble['y1']*h
 
-            x2 = bubble['x2']*resize_w
-            y2 = bubble['y2']*resize_h
+            x2 = bubble['x2']*w
+            y2 = bubble['y2']*h
             box = [x1, y1, x2, y2]
             draw.rectangle(box, outline="red", width=2)
 
